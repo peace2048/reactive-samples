@@ -38,4 +38,28 @@ Public Module DataAccessExtensions
     Return p
   End Function
 
+  ''' <summary>
+  ''' IDataReader を Linq で処理できるように IEnumerable(Of IDataRecord) にへんかんします。
+  ''' </summary>
+  ''' <param name="reader">IDataReader</param>
+  ''' <remarks>
+  ''' IDataReader は Dispose しませんので、呼び出し側で Dispose してください。
+  ''' <example>
+  ''' Using reader = command.ExecuteReader()
+  '''   Return reader.AsEnumerable().
+  '''     Select(Function(record) New DataClass With {
+  '''       .Id = record.GetInt32(0),
+  '''       .Name = record.GetString(1)
+  '''     }).
+  '''     ToList()
+  ''' End Using
+  ''' </example>
+  ''' </remarks>
+  <Extension>
+  Public Iterator Function AsEnumerable(ByVal reader As IDataReader) As IEnumerable(Of IDataRecord)
+    While reader.Read()
+      Yield reader
+    End While
+  End Function
+  
 End Module
